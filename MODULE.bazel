@@ -21,9 +21,9 @@ bazel_dep(name = "bazel_skylib", version = "1.4.2")
 # bazel_dep(name = "rules_cc",  version = RULES_CC_VERSION)
 
 bazel_dep(name = "makeheaders", version = MAKEHEADERS_VERSION)
-bazel_dep(name = "gopt", version = GOPT_VERSION, dev_dependency=True)
-bazel_dep(name = "uthash", version = UTHASH_VERSION, dev_dependency=True)
-bazel_dep(name = "liblog_cc",  version = LIBLOG_CC_VERSION, dev_dependency=True)
-bazel_dep(name = "unity",  version = UNITY_VERSION, dev_dependency=True)
+bazel_dep(name = "gopt", version = GOPT_VERSION)
+bazel_dep(name = "uthash", version = UTHASH_VERSION)
+bazel_dep(name = "liblog_cc",  version = LIBLOG_CC_VERSION)
+bazel_dep(name = "unity",  version = UNITY_VERSION)
 
 bazel_dep(name = "libs7", version = LIBS7_VERSION)
