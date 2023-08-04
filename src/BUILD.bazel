@@ -39,6 +39,7 @@ cc_library(
     copts = COPTS,
     local_defines = DEFINES,
     linkopts = LINKOPTS,
+    visibility = ["//visibility:public"]
 )
 
 makeheaders(
