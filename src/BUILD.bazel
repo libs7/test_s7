@@ -1,0 +1,49 @@
+# load("@rules_cc//cc:defs.bzl", "cc_test")
+
+load("@makeheaders//src:BUILD.bzl", "makeheaders")
+
+load("@libs7//config/cc:BUILD.bzl",
+     "BASE_SRCS", "BASE_DEPS", "BASE_INCLUDE_PATHS",
+     "BASE_COPTS", "BASE_DEFINES", "BASE_LINKOPTS")
+
+load("//:BUILD.bzl",
+     "TIMEOUT",
+     "GOPT_VERSION",
+     "LIBS7_VERSION",
+     "UNITY_VERSION",
+     "UTHASH_VERSION")
+
+DEPS          = BASE_DEPS + [
+    "@libs7//src:s7",
+    "@gopt//:gopt",
+    "@unity//src:unity",
+    "@uthash//src:uthash"
+]
+SRCS          = [] # BASE_SRCS
+INCLUDE_PATHS = BASE_INCLUDE_PATHS + [
+    "-I$(GENDIR)/src",
+    "-Iexternal/gopt~{}/src".format(GOPT_VERSION),
+    "-Iexternal/unity~{}/src".format(UNITY_VERSION),
+    "-Iexternal/uthash~{}/src".format(UTHASH_VERSION)
+]
+COPTS         = BASE_COPTS + INCLUDE_PATHS
+DEFINES       = BASE_DEFINES
+LINKOPTS      = BASE_LINKOPTS
+
+################################################################
+cc_library(
+    name = "test_s7",
+    linkstatic = True,
+    srcs = SRCS + ["test_s7.c", ":mkhdrs"],
+    deps = DEPS,
+    copts = COPTS,
+    local_defines = DEFINES,
+    linkopts = LINKOPTS,
+)
+
+makeheaders(
+    name = "mkhdrs",
+    # out ="findlib.h",
+    # export_interface = True,
+    srcs = ["test_s7.c"],
+)
