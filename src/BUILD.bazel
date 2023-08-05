@@ -1,6 +1,6 @@
 # load("@rules_cc//cc:defs.bzl", "cc_test")
 
-load("@makeheaders//src:BUILD.bzl", "makeheaders")
+load("@makeheaders//src:RULES.bzl", "makeheaders")
 
 load("@libs7//config/cc:BUILD.bzl",
      "BASE_SRCS", "BASE_DEPS", "BASE_INCLUDE_PATHS",
@@ -10,6 +10,7 @@ load("//:BUILD.bzl",
      "TIMEOUT",
      "GOPT_VERSION",
      "LIBS7_VERSION",
+     "TEST_S7_VERSION",
      "UNITY_VERSION",
      "UTHASH_VERSION")
 
@@ -22,6 +23,7 @@ DEPS          = BASE_DEPS + [
 SRCS          = [] # BASE_SRCS
 INCLUDE_PATHS = BASE_INCLUDE_PATHS + [
     "-I$(GENDIR)/src",
+    "-I$(GENDIR)/external/test_s7~{}/src".format(TEST_S7_VERSION),
     "-Iexternal/gopt~{}/src".format(GOPT_VERSION),
     "-Iexternal/unity~{}/src".format(UNITY_VERSION),
     "-Iexternal/uthash~{}/src".format(UTHASH_VERSION)
@@ -35,6 +37,7 @@ cc_library(
     name = "test_s7",
     linkstatic = True,
     srcs = SRCS + ["test_s7.c", ":mkhdrs"],
+    hdrs = [":mkhdrs"],
     deps = DEPS,
     copts = COPTS,
     local_defines = DEFINES,
@@ -46,5 +49,5 @@ makeheaders(
     name = "mkhdrs",
     # out ="findlib.h",
     # export_interface = True,
-    srcs = ["test_s7.c"],
+    hdrs_srcs = ["test_s7.c"],
 )

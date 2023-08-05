@@ -11,16 +11,23 @@
 #include "utarray.h"
 #include "utstring.h"
 
+#if EXPORT_INTERFACE
 #include "libs7.h"
+#endif
 
 #include "test_s7.h"
 
 s7_scheme *s7;
 
+extern bool verbose;
+extern int  verbosity;
+extern bool debug;
+
 /* #if defined(DEVBUILD) */
-/* extern bool libs7_debug; */
-/* extern bool libs7_debug_runfiles; */
-/* extern bool libs7_trace; */
+extern bool libs7_verbose;
+extern bool libs7_debug;
+extern bool libs7_debug_runfiles;
+extern bool libs7_trace;
 /* #endif */
 
 extern struct option options[];
@@ -33,9 +40,6 @@ UT_string *sexp;
 s7_pointer actual;
 s7_pointer expected;
 
-bool verbose;
-bool debug;
-
 void cleanup(void)
 {
     /* https://wiki.sei.cmu.edu/confluence/display/c/FIO23-C.+Do+not+exit+with+unflushed+data+in+stdout+or+stderr */
@@ -47,13 +51,13 @@ void cleanup(void)
 }
 
 void print_usage(char *test) {
-    printf("Usage:\t$ bazel test test:%s [link strategy] [--test_arg=flag]\n", test);
+    printf("Usage:\t$ bazel test test:%s [-- flags]\n", test);
     /* printf("  Link strategies:\n"); */
     /* printf("\t--//config/clibs/link=static\tStatic link/load (static libs). Default.\n"); */
     /* printf("\t--//config/clibs/link=shared\tStatic link, dynamic load (shared libs)\n"); */
     /* printf("\t--//config/clibs/link=runtime\tLink/load at runtime (dload shared libs)\n"); */
-    printf("  (prefix @libs7 if used as external repo), e.g.\n");
-    printf("\t\t--@libs7//config/clibs/link=shared\n");
+    /* printf("  (prefix @libs7 if used as external repo), e.g.\n"); */
+    /* printf("\t\t--@libs7//config/clibs/link=shared\n"); */
 
     printf("  Flags (repeatable)\n");
     printf("\t-d, --debug\t\tEnable all debugging flags.\n");
@@ -113,8 +117,12 @@ void set_options(char *test, struct option options[])
         /* libs7_trace = true; */
     }
     if (options[FLAG_VERBOSE].count) {
-        log_info("verbose ct: %d", options[FLAG_VERBOSE].count);
+        verbosity = options[FLAG_VERBOSE].count;
+        log_info("verbosity: %d", verbosity);
         verbose = true;
+        if (verbosity > 1) {
+            libs7_verbose = true;
+        }
     }
 }
 
@@ -175,6 +183,7 @@ s7_scheme *initialize(char *test, int argc, char **argv)
     set_options(test, options);
 
     if (debug) print_debug_env();
+    print_debug_env();
 
     s7_scheme *s7 = libs7_init();
 
